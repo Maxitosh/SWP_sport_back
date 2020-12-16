@@ -12,9 +12,11 @@ pipeline {
         docker {
           image 'docker/compose'
         }
+
       }
       steps {
         echo 'Testing..'
+        sh 'docker-compose --version'
       }
     }
 
