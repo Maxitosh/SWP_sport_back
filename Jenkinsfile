@@ -10,7 +10,10 @@ pipeline {
     stage('Test') {
       steps {
         echo 'Testing..'
-        sh 'docker --version'
+        dockerNode(image: 'docker/compose') {
+          sh 'docker-compose -f compose/docker-compose-test.yml build'
+        }
+
       }
     }
 
