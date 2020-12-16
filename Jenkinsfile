@@ -16,7 +16,8 @@ pipeline {
       }
       steps {
         echo 'Testing..'
-        sh '''docker-compose -f compose/docker-compose-test.yml build
+        sh '''export COMPOSE_INTERACTIVE_NO_CLI=1
+docker-compose -f compose/docker-compose-test.yml build
 docker-compose -f compose/docker-compose-test.yml up -d
 sleep 3
 docker-compose -f compose/docker-compose-test.yml exec adminpanel python manage.py makemigrations
