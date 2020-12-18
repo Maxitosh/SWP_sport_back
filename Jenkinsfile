@@ -18,8 +18,11 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python mana
 docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
       }
     }
-    
+
     stage('Build') {
+      environment {
+        registryCredentialSet = 'dockerhub'
+      }
       steps {
         echo 'Building..'
       }
