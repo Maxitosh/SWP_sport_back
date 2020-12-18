@@ -20,6 +20,9 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
     }
 
     stage('Build') {
+      environment {
+        PYTHON_VERSION = credentials('python-version')
+      }
       steps {
         echo 'Building..'
         script {
