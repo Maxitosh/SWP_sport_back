@@ -26,7 +26,7 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
       steps {
         echo 'Building..'
         script {
-          dockerInstanceDjango = docker.build("sport-app", "./adminpage")
+          dockerInstanceDjango = docker.build("sport-app", "--build-arg PYTHON_VERSION=${PYTHON_VERSION} ./adminpage")
         }
       }
     }
