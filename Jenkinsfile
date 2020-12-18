@@ -27,11 +27,20 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
         echo 'Building..'
         script {
           dockerInstanceDjango = docker.build("winnerokay/sna-app", '--build-arg PYTHON_VERSION=$PYTHON_VERSION ./adminpage')
+          dockerInstanceDjango.inside(){
+            bash './manage.py makemigrations'
+          }
         }
       }
     }
-
-    stage('Publish') {
+    
+    stage('Migrate'){
+      steps {
+        echo 'Making migrations to the db...' 
+      }
+    }
+    
+    stage('Push to registry') {
       environment {
         registryCredentialSet = 'dockerhub'
       }
@@ -39,6 +48,7 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
         echo 'Publishing....'
         script{
           docker.withRegistry('', registryCredentialSet){
+            dockerInstanceDjango.push("${env.BUILD_NUMBER}")
             dockerInstanceDjango.push("latest")
           }
         }
