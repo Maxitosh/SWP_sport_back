@@ -19,7 +19,7 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
       post {
         cleanup {
           echo 'Cleanup...'
-          sh 'docker-compose -f compose/docker-compose-test.yml down -v -rmi all'  
+          sh 'docker-compose -f compose/docker-compose-test.yml down -v --rmi all'  
         }
       }
     }
