@@ -10,12 +10,16 @@ pipeline {
       }
       steps {
         echo 'Testing..'
-        sh '''docker-compose -f compose/docker-compose-test.yml build
-docker-compose -f compose/docker-compose-test.yml up -d
-sleep 3
-docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py makemigrations
-docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py migrate
-docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
+        sh 'docker-compose -f compose/docker-compose-test.yml build'
+        sh 'docker-compose -f compose/docker-compose-test.yml up -d'
+        sh 'sleep 3'
+        sh 'docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py makemigrations'
+        sh 'docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py migrate'
+        try{
+          sh 'docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'
+        }finally{
+         sh 'docker-compose -f compose/docker-compose-test.yml down' 
+        }
       }
     }
 
