@@ -10,7 +10,7 @@ pipeline {
       }
       steps {
         echo 'Testing..'
-        sh '''docker-compose -f compose/docker-compose-test.yml build
+        sh '''docker-compose -f compose/docker-compose-test.yml build --no-cache
 docker-compose -f compose/docker-compose-test.yml up -d
 docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py makemigrations
 docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py migrate
@@ -19,7 +19,7 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
       post {
         cleanup {
           echo 'Cleanup...'
-          //sh 'docker-compose -f compose/docker-compose-test.yml down'  
+          sh 'docker-compose -f compose/docker-compose-test.yml down -v -rmi all'  
         }
       }
     }
