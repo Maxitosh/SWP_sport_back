@@ -20,19 +20,32 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
     }
 
     stage('Build') {
+      steps {
+        echo 'Building..'
+        script {
+          dockerInstanceDjango = docker.build("sport-app", "./adminpage/Dockerfile")
+        }
+      }
+    }
+
+    stage('Publish') {
       environment {
         registryCredentialSet = 'dockerhub'
       }
       steps {
-        echo 'Building..'
+        echo 'Publishing....'
+        script{
+          docker.withRegistry('', registryCredentialSet){
+            dockerInstanceDjango.push("latest")
+          }
+        }
       }
     }
-
-    stage('Deploy') {
+    
+    stage('Deploy'){
       steps {
-        echo 'Deploying....'
+        echo 'Deploying...'
       }
     }
-
   }
 }
