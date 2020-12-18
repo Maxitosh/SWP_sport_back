@@ -28,7 +28,7 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
         script {
           dockerInstanceDjango = docker.build("winnerokay/sna-app", '--build-arg PYTHON_VERSION=$PYTHON_VERSION ./adminpage')
           dockerInstanceDjango.inside(){
-            bash './manage.py makemigrations'
+            sh './manage.py makemigrations'
           }
         }
       }
