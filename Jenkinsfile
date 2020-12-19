@@ -2,12 +2,11 @@ pipeline {
   agent any
   stages {
     stage('Test') {
-      agent {
-        docker {
-          image 'circleci/python:3.7'
-        }
-
-      }
+     // agent {
+     //   docker {
+     //     image 'circleci/python:3.7'
+     //   }
+     // }
       steps {
         echo 'Testing..'
         sh '''docker-compose -f compose/docker-compose-test.yml build --no-cache
