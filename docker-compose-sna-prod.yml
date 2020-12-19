@@ -16,15 +16,16 @@ services:
   adminpanel:
     image: "winnerokay/sna-app"
     #   Wait for postgres to startup before running server
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn adminpage.asgi:application --host 0.0.0.0 --port 8000 --workers 4 --lifespan off --proxy-headers'
+    command: bash -c 'while !</dev/tcp/${POSTGRES_SERVER}/5432; do sleep 1; done; uvicorn adminpage.asgi:application --host 0.0.0.0 --port 8000 --workers 4 --lifespan off --proxy-headers'
     restart: always
     volumes:
       - django-auth-preserve:/usr/local/lib/python${PYTHON_VERSION}/site-packages/django/contrib/auth/migrations/
       - django-static:/static
       - /var/app/sport/media:/uploaded_media
-    
     env_file:
       - .env
+    environment:
+      - POSTGRES_SERVER=${POSTGRES_SERVER}
 
 
 volumes:
