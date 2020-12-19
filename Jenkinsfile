@@ -9,17 +9,25 @@ pipeline {
      // }
       steps {
         echo 'Testing..'
-        sh '''docker-compose -f compose/docker-compose-test.yml build --no-cache
-docker-compose -f compose/docker-compose-test.yml up -d
-while ! nc -z localhost 5432 </dev/null; do sleep 1; done
-docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py makemigrations
-docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py migrate
-docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
+        sh '''
+          ln -s docker-compose-test.yml docker-compose.yml
+          echo "Building test images..."
+          docker-compose build --no-cache
+          docker-compose up -d
+          echo "Waiting for database to go up..."
+          while ! nc -z localhost 5432 </dev/null; do sleep 1; done
+          echo "Making migrations..."
+          docker-compose exec -T adminpanel python manage.py makemigrations
+          docker-compose exec -T adminpanel python manage.py migrate
+          echo "Running tests..."
+          docker-compose exec -T adminpanel pytest
+          echo "done"
+          '''
       }
       post {
         cleanup {
           echo 'Cleanup...'
-          sh 'docker-compose -f compose/docker-compose-test.yml down -v --rmi all'  
+          sh 'docker-compose down -v --rmi all && rm docker-compose.yml'
         }
       }
     }
@@ -32,6 +40,7 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
         echo 'Building..'
         script {
           dockerInstanceDjango = docker.build("winnerokay/sna-app", '--build-arg PYTHON_VERSION=$PYTHON_VERSION ./adminpage')
+	  dockerInstanceNginx = docker.build("winnerokay/sna-app-nginx", './nginx')
         }
       }
     }
@@ -52,6 +61,8 @@ docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
           docker.withRegistry('', registryCredentialSet){
             dockerInstanceDjango.push("${env.BUILD_NUMBER}")
             dockerInstanceDjango.push("latest")
+	    dockerInstanceNginx.push("${env.BUILD_NUMBER}")
+            dockerInstanceNginx.push("latest")
           }
         }
       }
