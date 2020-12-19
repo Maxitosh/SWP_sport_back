@@ -15,7 +15,7 @@ pipeline {
           docker-compose build --no-cache
           docker-compose up -d
           echo "Waiting for database to go up..."
-          while ! nc -z localhost 5432 </dev/null; do sleep 1; done
+          docker-compose exec -T adminpanel while !</dev/tcp/db/5432; do sleep 1; done;  
           echo "Making migrations..."
           docker-compose exec -T adminpanel python manage.py makemigrations
           docker-compose exec -T adminpanel python manage.py migrate
