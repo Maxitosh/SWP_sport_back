@@ -11,6 +11,7 @@ pipeline {
         echo 'Testing..'
         sh '''docker-compose -f compose/docker-compose-test.yml build --no-cache
 docker-compose -f compose/docker-compose-test.yml up -d
+while ! nc -z localhost 5432 </dev/null; do sleep 1; done
 docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py makemigrations
 docker-compose -f compose/docker-compose-test.yml exec -T adminpanel python manage.py migrate
 docker-compose -f compose/docker-compose-test.yml exec -T adminpanel pytest'''
