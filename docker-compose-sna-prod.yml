@@ -2,7 +2,7 @@ version: '3.5'
 services:
   nginx:
     restart: always
-    image: "winnerokay/sna-app-nginx"
+    image: "winnerokay/sna-app-nginx:latest"
     ports:
       - "80:80"
     depends_on:
@@ -14,7 +14,7 @@ services:
       - /var/app/sport/media:/media:ro
 
   adminpanel:
-    image: "winnerokay/sna-app"
+    image: "winnerokay/sna-app:latest"
     #   Wait for postgres to startup before running server
     command: bash -c 'while !</dev/tcp/${POSTGRES_SERVER}/5432; do sleep 1; done; uvicorn adminpage.asgi:application --host 0.0.0.0 --port 8000 --workers 4 --lifespan off --proxy-headers'
     restart: always
