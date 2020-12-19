@@ -2,11 +2,6 @@ pipeline {
   agent any
   stages {
     stage('Test') {
-     // agent {
-     //   docker {
-     //     image 'circleci/python:3.7'
-     //   }
-     // }
       steps {
         echo 'Testing..'
         sh '''
@@ -15,7 +10,7 @@ pipeline {
           docker-compose build --no-cache
           docker-compose up -d
           echo "Waiting for database to go up..."
-          docker-compose exec -T adminpanel while !</dev/tcp/db/5432; do sleep 1; done;  
+          docker-compose exec -T adminpanel bash -c "while !</dev/tcp/db/5432; do sleep 1; done;"  
           echo "Making migrations..."
           docker-compose exec -T adminpanel python manage.py makemigrations
           docker-compose exec -T adminpanel python manage.py migrate
