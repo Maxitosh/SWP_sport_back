@@ -4,7 +4,7 @@ pipeline {
     stage('Test') {
       agent {
         docker {
-          image 'docker/compose'
+          image 'circleci/python:3.7'
         }
 
       }
